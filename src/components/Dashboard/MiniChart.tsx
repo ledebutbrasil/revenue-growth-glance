@@ -47,6 +47,12 @@ const MiniChart: React.FC<MiniChartProps> = ({ data, progressPercentage, isInver
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+        <defs>
+          <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={chartColor} stopOpacity={0.8}/>
+            <stop offset="95%" stopColor={chartColor} stopOpacity={0.1}/>
+          </linearGradient>
+        </defs>
         <XAxis 
           dataKey="period" 
           tick={{ fontSize: 8, fill: '#6c757d' }}
@@ -73,7 +79,9 @@ const MiniChart: React.FC<MiniChartProps> = ({ data, progressPercentage, isInver
           stroke={chartColor} 
           strokeWidth={2} 
           dot={{ r: 2, fill: chartColor }}
-          activeDot={{ r: 4 }}
+          activeDot={{ r: 4, className: "chart-active-dot" }}
+          className="glow-chart-line"
+          animationDuration={1500}
         />
         {data.some(item => item.goal !== undefined) && (
           <Line 
@@ -83,6 +91,7 @@ const MiniChart: React.FC<MiniChartProps> = ({ data, progressPercentage, isInver
             strokeWidth={1} 
             strokeDasharray="3 3"
             dot={false}
+            animationDuration={1500}
           />
         )}
       </LineChart>

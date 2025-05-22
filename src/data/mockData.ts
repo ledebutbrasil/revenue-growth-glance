@@ -481,12 +481,12 @@ function generateHistoryData(period: TimePeriod, kpi: KPIData, channelFactor: nu
     const value = Math.round((kpi.previousValue * 0.8 + valueStep * i) * randomFactor);
     
     // Only add the goal to the last item
-    const dataPoint = {
+    const dataPoint: { period: string; value: number; goal?: number } = {
       period: labels[i],
       value: value
     };
     
-    if (i === dataCount - 1) {
+    if (i === dataCount - 1 && kpi.goal !== undefined) {
       dataPoint.goal = kpi.goal * channelFactor;
     }
     

@@ -63,7 +63,7 @@ const ChannelTable: React.FC<ChannelTableProps> = ({ data: initialData }) => {
     <div className="dashboard-card h-full overflow-hidden">
       <div className="p-4 border-b border-dark-100 flex items-center">
         <ChartBar className="h-4 w-4 text-brand-primary mr-2" />
-        <h3 className="text-base font-medium text-white">Performance por Canal</h3>
+        <h3 className="text-base font-medium text-white">CANAIS DE AQUISIÇÃO DE LEADS</h3>
       </div>
       
       <div className="overflow-x-auto">

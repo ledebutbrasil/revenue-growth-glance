@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { 
@@ -28,13 +29,14 @@ const Index = () => {
     id: "open-opportunities",
     name: "Oportunidades em Aberto",
     value: 57,
-    previousValue: 50, // Added missing property
+    previousValue: 50,
     change: 12.5,
     unit: "",
     goal: undefined, // Explicitly setting as undefined
     isInverse: false,
     isPositiveGood: true,
-    history: [ // Added missing history property
+    opportunityValue: 720000, // Adding the total value of opportunities
+    history: [
       { period: "Jan", value: 40 },
       { period: "Fev", value: 45 },
       { period: "Mar", value: 48 },
@@ -66,11 +68,16 @@ const Index = () => {
     else if (activePeriod === 'quarterly') multiplier *= 3;
     else if (activePeriod === 'yearly') multiplier *= 12;
     
+    const opportunityCount = Math.round(baseValue * multiplier);
+    // Calculate a weighted opportunity value based on the count
+    const opportunityValue = opportunityCount * 12500; // Average opportunity value of R$12,500
+    
     setOpenOpportunities(prev => ({
       ...prev,
-      value: Math.round(baseValue * multiplier),
+      value: opportunityCount,
+      opportunityValue: opportunityValue,
       // Also update history data based on period
-      history: generateHistoryForPeriod(activePeriod, Math.round(baseValue * multiplier))
+      history: generateHistoryForPeriod(activePeriod, opportunityCount)
     }));
   }, [activePeriod, activeChannel]);
   
@@ -139,18 +146,18 @@ const Index = () => {
         ))}
       </div>
       
-      {/* Second row - Lead sources and additional KPIs */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div className="lg:col-span-1">
-          <LeadSourceChart data={sourceData} />
-        </div>
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Add Open Opportunities KPI card */}
-          <KPICard key={openOpportunities.id} data={openOpportunities} onGoalUpdate={handleGoalUpdate} />
-          {kpiData.slice(8).map(kpi => (
-            <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />
-          ))}
-        </div>
+      {/* Second row - Additional KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {/* Add Open Opportunities KPI card */}
+        <KPICard key={openOpportunities.id} data={openOpportunities} onGoalUpdate={handleGoalUpdate} />
+        {kpiData.slice(8).map(kpi => (
+          <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />
+        ))}
+      </div>
+      
+      {/* Lead sources chart - Moved to its own row */}
+      <div className="mb-6">
+        <LeadSourceChart data={sourceData} />
       </div>
       
       {/* Channel performance table */}

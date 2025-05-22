@@ -63,6 +63,11 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
     ? `${data.unit} ${formatValue(data.value)}` 
     : `${formatValue(data.value)}${data.unit}`;
 
+  // Special case for "Oportunidades em Aberto" to show additional value
+  const isOpportunities = data.id === "open-opportunities";
+  const opportunityTotalValue = data.opportunityValue || 0;
+  const formattedOpportunityValue = `R$ ${formatValue(opportunityTotalValue)}`;
+
   return (
     <div className="dashboard-card animate-fade-in p-4 h-full flex flex-col">
       <div className="flex justify-between items-start mb-2">
@@ -74,6 +79,13 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
       </div>
       
       <div className="kpi-value mb-3">{formattedValue}</div>
+      
+      {/* Show opportunity total value when this is the opportunities KPI */}
+      {isOpportunities && (
+        <div className="text-sm text-gray-300 mb-3">
+          Valor total: {formattedOpportunityValue}
+        </div>
+      )}
       
       <div className="mt-auto">
         {data.goal !== undefined && (
@@ -112,7 +124,7 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
             <Progress 
               value={progressPercentage} 
               className={cn(
-                "progress-bar h-2",
+                "progress-bar h-2 glow-progress",
                 progressPercentage >= 100 ? "progress-bar-fill-good" : "progress-bar-fill-bad"
               )}
             />

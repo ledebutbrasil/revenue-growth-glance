@@ -106,4 +106,54 @@
   .filter-button-active {
     @apply bg-primary/20 text-primary hover:bg-primary/30;
   }
+  
+  /* Neon glow animations */
+  .glow-progress {
+    @apply relative overflow-hidden;
+    box-shadow: 0 0 5px rgba(29, 185, 84, 0.5);
+  }
+  
+  .glow-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progress-shine 3s infinite;
+    pointer-events: none;
+  }
+  
+  .glow-chart path {
+    filter: drop-shadow(0 0 2px rgba(29, 185, 84, 0.5));
+    transition: filter 0.3s ease;
+  }
+  
+  .glow-chart path:hover {
+    filter: drop-shadow(0 0 4px rgba(29, 185, 84, 0.8));
+  }
+  
+  @keyframes progress-shine {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 200%;
+    }
+  }
+  
+  /* Pulse animation for key elements */
+  .dashboard-card {
+    animation: card-pulse 5s infinite alternate;
+  }
+  
+  @keyframes card-pulse {
+    0% {
+      box-shadow: 0 0 5px rgba(29, 185, 84, 0.1);
+    }
+    100% {
+      box-shadow: 0 0 15px rgba(29, 185, 84, 0.3);
+    }
+  }
 }

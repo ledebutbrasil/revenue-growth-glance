@@ -2,6 +2,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { ChartData } from '@/data/mockData';
+import { ChartPie } from 'lucide-react';
 
 interface LeadSourceChartProps {
   data: ChartData[];
@@ -45,38 +46,44 @@ const LeadSourceChart: React.FC<LeadSourceChartProps> = ({ data }) => {
   };
   
   return (
-    <div className="dashboard-card h-full p-4">
-      <h3 className="text-base font-medium text-white mb-1">Origem dos Leads</h3>
-      <p className="text-xs text-gray-400 mb-2">Total: {totalLeads} leads</p>
+    <div className="dashboard-card h-full">
+      <div className="p-4 border-b border-dark-100 flex items-center">
+        <ChartPie className="h-4 w-4 text-brand-primary mr-2" />
+        <h3 className="text-base font-medium text-white">ORIGEM DOS LEADS</h3>
+        <span className="ml-2 text-xs text-gray-400">Total: {totalLeads} leads</span>
+      </div>
       
-      <div className="chart-container" style={{ height: '250px' }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              innerRadius={40}
-              fill="#8884d8"
-              dataKey="value"
-              label={renderCustomizedLabel}
-              paddingAngle={2}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              layout="horizontal" 
-              verticalAlign="bottom" 
-              align="center"
-              formatter={(value) => <span className="text-xs text-gray-300">{value}</span>}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="p-4">
+        <div className="chart-container" style={{ height: '200px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={80}
+                innerRadius={40}
+                fill="#8884d8"
+                dataKey="value"
+                label={renderCustomizedLabel}
+                paddingAngle={2}
+                className="glow-chart"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend 
+                layout="horizontal" 
+                verticalAlign="bottom" 
+                align="center"
+                formatter={(value) => <span className="text-xs text-gray-300">{value}</span>}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
