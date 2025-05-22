@@ -10,6 +10,7 @@ export interface KPIData {
   change: number;
   isPositiveGood: boolean;
   isInverse?: boolean; // For KPIs where lower is better
+  opportunityValue?: number; // Adding this property for opportunity values
   history: Array<{ period: string; value: number; goal?: number }>; // Historical data
 }
 

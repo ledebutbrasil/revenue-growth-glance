@@ -46,15 +46,15 @@ const LeadSourceChart: React.FC<LeadSourceChartProps> = ({ data }) => {
   };
   
   return (
-    <div className="dashboard-card h-full">
+    <div className="dashboard-card h-full flex flex-col">
       <div className="p-4 border-b border-dark-100 flex items-center">
         <ChartPie className="h-4 w-4 text-brand-primary mr-2" />
         <h3 className="text-base font-medium text-white">ORIGEM DOS LEADS</h3>
         <span className="ml-2 text-xs text-gray-400">Total: {totalLeads} leads</span>
       </div>
       
-      <div className="p-4">
-        <div className="chart-container" style={{ height: '200px' }}>
+      <div className="p-4 flex-1 flex items-center justify-center">
+        <div className="chart-container" style={{ height: '180px', width: '100%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -62,8 +62,8 @@ const LeadSourceChart: React.FC<LeadSourceChartProps> = ({ data }) => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={80}
-                innerRadius={40}
+                outerRadius={70}
+                innerRadius={35}
                 fill="#8884d8"
                 dataKey="value"
                 label={renderCustomizedLabel}

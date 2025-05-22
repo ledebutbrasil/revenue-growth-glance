@@ -23,6 +23,7 @@ const Index = () => {
   const [kpiData, setKpiData] = useState(initialKpiData);
   const [sourceData, setSourceData] = useState(initialSourceData);
   const [channelData, setChannelData] = useState(initialChannelData);
+  const [motivationalQuote, setMotivationalQuote] = useState<string>("Transforme seus leads em oportunidades e suas oportunidades em sucesso!");
   
   // Create a separate KPI for open opportunities with all required KPIData properties
   const [openOpportunities, setOpenOpportunities] = useState<KPIData>({
@@ -32,10 +33,9 @@ const Index = () => {
     previousValue: 50,
     change: 12.5,
     unit: "",
-    goal: undefined, // Explicitly setting as undefined
+    opportunityValue: 720000, // Adding the total value of opportunities
     isInverse: false,
     isPositiveGood: true,
-    opportunityValue: 720000, // Adding the total value of opportunities
     history: [
       { period: "Jan", value: 40 },
       { period: "Fev", value: 45 },
@@ -130,6 +130,11 @@ const Index = () => {
     });
   };
 
+  // Handle motivational quote update
+  const handleQuoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMotivationalQuote(e.target.value);
+  };
+
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden p-4 md:p-6">
       <Header 
@@ -138,6 +143,22 @@ const Index = () => {
         activeChannel={activeChannel}
         setActiveChannel={setActiveChannel}
       />
+      
+      {/* Motivational Quote Section */}
+      <div className="mb-6">
+        <div className="dashboard-card p-4 flex items-center justify-between">
+          <h2 className="text-lg font-medium text-white">COSMOÉTICA DASHBOARD</h2>
+          <div className="flex-1 mx-4">
+            <input
+              type="text"
+              value={motivationalQuote}
+              onChange={handleQuoteChange}
+              className="w-full bg-dark-100 border border-dark-100 rounded px-3 py-1.5 text-white focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="Digite uma frase motivacional..."
+            />
+          </div>
+        </div>
+      </div>
       
       {/* Main grid layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -155,9 +176,14 @@ const Index = () => {
         ))}
       </div>
       
-      {/* Lead sources chart - Moved to its own row */}
-      <div className="mb-6">
-        <LeadSourceChart data={sourceData} />
+      {/* Lead sources chart - in its own row with grid layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="sm:col-span-1">
+          <LeadSourceChart data={sourceData} />
+        </div>
+        <div className="sm:col-span-2">
+          {/* This div is intentionally empty to maintain layout balance */}
+        </div>
       </div>
       
       {/* Channel performance table */}
