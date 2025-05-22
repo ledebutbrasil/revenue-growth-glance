@@ -1,9 +1,11 @@
 
 import React, { useState } from 'react';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, LineChart } from 'lucide-react';
 import { KPIData } from '@/data/mockData';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import MiniChart from './MiniChart';
 
 interface KPICardProps {
   data: KPIData;
@@ -14,12 +16,26 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [goalValue, setGoalValue] = useState(data.goal.toString());
   
-  const progressPercentage = Math.min(Math.round((data.value / data.goal) * 100), 100);
+  // Calculate progress percentage based on the KPI type
+  const progressPercentage = data.isInverse 
+    ? Math.min(Math.round((data.goal / data.value) * 100), 100) 
+    : Math.min(Math.round((data.value / data.goal) * 100), 100);
+
   const isPositiveChange = data.change > 0;
   const changeIndicator = isPositiveChange ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
-  const changeColor = (isPositiveChange && data.isPositiveGood) || (!isPositiveChange && !data.isPositiveGood)
-    ? "text-brand-primary"
-    : "text-brand-accent";
+  
+  // Determine if the change is good based on whether the KPI is inverse
+  const isGoodChange = (isPositiveChange && data.isPositiveGood) || 
+                       (!isPositiveChange && !data.isPositiveGood);
+  const changeColor = isGoodChange ? "text-brand-primary" : "text-brand-accent";
+
+  // Determine progress color based on percentage
+  const getProgressColorClass = () => {
+    if (progressPercentage < 30) return "progress-bar-fill-danger";
+    if (progressPercentage < 60) return "progress-bar-fill-warning";
+    if (progressPercentage < 90) return "progress-bar-fill-info";
+    return "progress-bar-fill-good";
+  };
 
   const handleGoalSubmit = () => {
     const newGoal = Number(goalValue);
@@ -90,9 +106,21 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
         </div>
         <Progress 
           value={progressPercentage} 
-          className="progress-bar" 
-          indicatorClassName={progressPercentage >= 100 ? "progress-bar-fill progress-bar-fill-good" : "progress-bar-fill progress-bar-fill-bad"} 
+          className="progress-bar h-2" 
+          className={cn(
+            "progress-bar h-2",
+            progressPercentage >= 100 ? "progress-bar-fill-good" : "progress-bar-fill-bad"
+          )}
         />
+        
+        {/* Mini chart for historical data */}
+        <div className="mt-3 h-20">
+          <MiniChart 
+            data={data.history} 
+            progressPercentage={progressPercentage} 
+            isInverse={data.isInverse}
+          />
+        </div>
       </div>
     </div>
   );

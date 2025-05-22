@@ -9,7 +9,8 @@ import {
   getFilteredSourceData,
   getFilteredChannelData,
   TimePeriod,
-  KPIData
+  KPIData,
+  SalesChannel
 } from '@/data/mockData';
 import Header from '@/components/Dashboard/Header';
 import KPICard from '@/components/Dashboard/KPICard';
@@ -18,16 +19,17 @@ import ChannelTable from '@/components/Dashboard/ChannelTable';
 
 const Index = () => {
   const [activePeriod, setActivePeriod] = useState<TimePeriod>('monthly');
+  const [activeChannel, setActiveChannel] = useState<SalesChannel | "all">('all');
   const [kpiData, setKpiData] = useState(initialKpiData);
   const [sourceData, setSourceData] = useState(initialSourceData);
   const [channelData, setChannelData] = useState(initialChannelData);
   
-  // Update data when period changes
+  // Update data when period or channel changes
   useEffect(() => {
-    setKpiData(getFilteredKpiData(activePeriod));
-    setSourceData(getFilteredSourceData(activePeriod));
-    setChannelData(getFilteredChannelData(activePeriod));
-  }, [activePeriod]);
+    setKpiData(getFilteredKpiData(activePeriod, activeChannel));
+    setSourceData(getFilteredSourceData(activePeriod, activeChannel));
+    setChannelData(getFilteredChannelData(activePeriod, activeChannel));
+  }, [activePeriod, activeChannel]);
   
   // Handle KPI goal updates
   const handleGoalUpdate = (id: string, newGoal: number) => {
@@ -44,7 +46,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden p-4 md:p-6">
-      <Header activePeriod={activePeriod} setActivePeriod={setActivePeriod} />
+      <Header 
+        activePeriod={activePeriod} 
+        setActivePeriod={setActivePeriod} 
+        activeChannel={activeChannel}
+        setActiveChannel={setActiveChannel}
+      />
       
       {/* Main grid layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

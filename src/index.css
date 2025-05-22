@@ -82,6 +82,18 @@
     @apply bg-brand-accent;
   }
   
+  .progress-bar-fill-danger {
+    @apply bg-brand-accent;
+  }
+  
+  .progress-bar-fill-warning {
+    @apply bg-yellow-500;
+  }
+  
+  .progress-bar-fill-info {
+    @apply bg-blue-500;
+  }
+  
   .chart-container {
     @apply w-full h-full min-h-[200px] py-4;
   }
