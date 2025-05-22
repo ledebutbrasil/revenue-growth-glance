@@ -13,13 +13,16 @@ interface KPICardProps {
 }
 
 const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
+  // Initialize goalValue state only if data.goal exists
   const [isEditingGoal, setIsEditingGoal] = useState(false);
-  const [goalValue, setGoalValue] = useState(data.goal.toString());
+  const [goalValue, setGoalValue] = useState(data.goal?.toString() || "0");
   
-  // Calculate progress percentage based on the KPI type
-  const progressPercentage = data.isInverse 
-    ? Math.min(Math.round((data.goal / data.value) * 100), 100) 
-    : Math.min(Math.round((data.value / data.goal) * 100), 100);
+  // Calculate progress percentage based on the KPI type, only if goal exists
+  const progressPercentage = data.goal !== undefined 
+    ? (data.isInverse 
+        ? Math.min(Math.round((data.goal / data.value) * 100), 100) 
+        : Math.min(Math.round((data.value / data.goal) * 100), 100))
+    : 0;
 
   const isPositiveChange = data.change > 0;
   const changeIndicator = isPositiveChange ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
@@ -42,7 +45,7 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
     if (!isNaN(newGoal) && newGoal > 0) {
       onGoalUpdate(data.id, newGoal);
     } else {
-      setGoalValue(data.goal.toString());
+      setGoalValue(data.goal?.toString() || "0");
     }
     setIsEditingGoal(false);
   };

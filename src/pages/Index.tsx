@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { 
@@ -24,15 +23,25 @@ const Index = () => {
   const [sourceData, setSourceData] = useState(initialSourceData);
   const [channelData, setChannelData] = useState(initialChannelData);
   
-  // Create a separate KPI for open opportunities
+  // Create a separate KPI for open opportunities with all required KPIData properties
   const [openOpportunities, setOpenOpportunities] = useState<KPIData>({
     id: "open-opportunities",
     name: "Oportunidades em Aberto",
     value: 57,
+    previousValue: 50, // Added missing property
     change: 12.5,
     unit: "",
+    goal: undefined, // Explicitly setting as undefined
     isInverse: false,
-    isPositiveGood: true
+    isPositiveGood: true,
+    history: [ // Added missing history property
+      { period: "Jan", value: 40 },
+      { period: "Fev", value: 45 },
+      { period: "Mar", value: 48 },
+      { period: "Abr", value: 50 },
+      { period: "Mai", value: 54 },
+      { period: "Jun", value: 57 }
+    ]
   });
   
   // Update data when period or channel changes
@@ -59,9 +68,47 @@ const Index = () => {
     
     setOpenOpportunities(prev => ({
       ...prev,
-      value: Math.round(baseValue * multiplier)
+      value: Math.round(baseValue * multiplier),
+      // Also update history data based on period
+      history: generateHistoryForPeriod(activePeriod, Math.round(baseValue * multiplier))
     }));
   }, [activePeriod, activeChannel]);
+  
+  // Helper function to generate appropriate history data based on period
+  const generateHistoryForPeriod = (period: TimePeriod, currentValue: number): Array<{ period: string; value: number }> => {
+    let labels: string[] = [];
+    let dataPoints: number[] = [];
+    
+    // Generate labels and data points based on period
+    switch(period) {
+      case 'daily':
+        labels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+        // Generate slightly random but trending data
+        dataPoints = Array.from({ length: 7 }, (_, i) => 
+          Math.round(currentValue * 0.7 + (currentValue * 0.3 * i / 6) + (Math.random() * 5 - 2.5))
+        );
+        break;
+      case 'monthly':
+        labels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
+        dataPoints = [40, 45, 48, 50, 54, currentValue];
+        break;
+      case 'quarterly':
+        labels = ["Q1", "Q2", "Q3", "Q4"];
+        dataPoints = [Math.round(currentValue * 0.7), Math.round(currentValue * 0.8), 
+                     Math.round(currentValue * 0.9), currentValue];
+        break;
+      case 'yearly':
+        labels = ["2023", "2024", "2025"];
+        dataPoints = [Math.round(currentValue * 0.6), Math.round(currentValue * 0.8), currentValue];
+        break;
+    }
+    
+    // Combine labels and data points
+    return labels.map((label, index) => ({
+      period: label,
+      value: dataPoints[index]
+    }));
+  };
   
   // Handle KPI goal updates
   const handleGoalUpdate = (id: string, newGoal: number) => {

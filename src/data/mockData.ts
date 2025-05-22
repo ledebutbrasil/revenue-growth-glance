@@ -5,7 +5,7 @@ export interface KPIData {
   name: string;
   value: number;
   previousValue: number;
-  goal: number;
+  goal?: number; // Making goal optional with ?
   unit: string;
   change: number;
   isPositiveGood: boolean;
