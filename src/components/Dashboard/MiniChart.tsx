@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Line, Bar, LineChart, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { cn } from '@/lib/utils';
 
 interface MiniChartProps {
@@ -10,15 +10,39 @@ interface MiniChartProps {
 }
 
 const MiniChart: React.FC<MiniChartProps> = ({ data, progressPercentage, isInverse }) => {
-  // Determine chart color based on progress percentage
-  const getChartColorClass = () => {
-    if (progressPercentage < 30) return "#FF6B6B"; // danger
-    if (progressPercentage < 60) return "#FFC857"; // warning
-    if (progressPercentage < 90) return "#4EA8DE"; // info
-    return "#1DB954"; // good
+  // Analyze trend direction
+  const getTrendDirection = () => {
+    if (data.length < 2) return "neutral";
+    
+    // Compare first and last values to determine overall trend
+    const firstValue = data[0].value;
+    const lastValue = data[data.length - 1].value;
+    
+    // Calculate average of period
+    const sum = data.reduce((acc, item) => acc + item.value, 0);
+    const average = sum / data.length;
+    
+    // Determine if last value is close to average (within 5%)
+    const isCloseToAverage = Math.abs(lastValue - average) / average < 0.05;
+    
+    if (isCloseToAverage) return "neutral";
+    if (lastValue > firstValue) return isInverse ? "negative" : "positive";
+    return isInverse ? "positive" : "negative";
   };
 
-  const chartColor = getChartColorClass();
+  // Get chart color based on trend direction
+  const getChartColor = () => {
+    const trend = getTrendDirection();
+    
+    switch(trend) {
+      case "positive": return "#1DB954"; // green for upward trend (good)
+      case "negative": return "#FF6B6B"; // red for downward trend (bad)
+      case "neutral": return "#FFC857"; // yellow for neutral/average
+      default: return "#4EA8DE"; // default blue
+    }
+  };
+
+  const chartColor = getChartColor();
   
   return (
     <ResponsiveContainer width="100%" height="100%">

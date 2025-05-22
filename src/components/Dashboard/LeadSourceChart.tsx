@@ -47,18 +47,18 @@ const LeadSourceChart: React.FC<LeadSourceChartProps> = ({ data }) => {
   return (
     <div className="dashboard-card h-full p-4">
       <h3 className="text-base font-medium text-white mb-1">Origem dos Leads</h3>
-      <p className="text-xs text-gray-400 mb-4">Total: {totalLeads} leads</p>
+      <p className="text-xs text-gray-400 mb-2">Total: {totalLeads} leads</p>
       
-      <div className="chart-container">
-        <ResponsiveContainer width="100%" height={300}>
+      <div className="chart-container" style={{ height: '250px' }}>
+        <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
               labelLine={false}
-              outerRadius={100}
-              innerRadius={50}
+              outerRadius={80}
+              innerRadius={40}
               fill="#8884d8"
               dataKey="value"
               label={renderCustomizedLabel}

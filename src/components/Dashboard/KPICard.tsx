@@ -73,54 +73,59 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
       <div className="kpi-value mb-3">{formattedValue}</div>
       
       <div className="mt-auto">
-        <div className="flex justify-between text-xs text-gray-400 mb-1">
-          <span>Progresso</span>
-          <div className="flex items-center">
-            {isEditingGoal ? (
-              <form 
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleGoalSubmit();
-                }}
-                className="flex items-center"
-              >
-                <Input
-                  type="number"
-                  value={goalValue}
-                  onChange={(e) => setGoalValue(e.target.value)}
-                  className="h-6 w-16 p-1 text-xs mr-1"
-                  autoFocus
-                  onBlur={handleGoalSubmit}
-                />
-                {data.unit}
-              </form>
-            ) : (
-              <span 
-                className="cursor-pointer hover:text-gray-300"
-                onClick={() => setIsEditingGoal(true)}
-              >
-                Meta: {data.unit === "R$" ? `${data.unit} ${formatValue(data.goal)}` : `${formatValue(data.goal)}${data.unit}`}
-              </span>
-            )}
-          </div>
-        </div>
-        <Progress 
-          value={progressPercentage} 
-          className="progress-bar h-2" 
-          className={cn(
-            "progress-bar h-2",
-            progressPercentage >= 100 ? "progress-bar-fill-good" : "progress-bar-fill-bad"
-          )}
-        />
+        {data.goal !== undefined && (
+          <>
+            <div className="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Progresso</span>
+              <div className="flex items-center">
+                {isEditingGoal ? (
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleGoalSubmit();
+                    }}
+                    className="flex items-center"
+                  >
+                    <Input
+                      type="number"
+                      value={goalValue}
+                      onChange={(e) => setGoalValue(e.target.value)}
+                      className="h-6 w-16 p-1 text-xs mr-1"
+                      autoFocus
+                      onBlur={handleGoalSubmit}
+                    />
+                    {data.unit}
+                  </form>
+                ) : (
+                  <span 
+                    className="cursor-pointer hover:text-gray-300"
+                    onClick={() => setIsEditingGoal(true)}
+                  >
+                    Meta: {data.unit === "R$" ? `${data.unit} ${formatValue(data.goal)}` : `${formatValue(data.goal)}${data.unit}`}
+                  </span>
+                )}
+              </div>
+            </div>
+            <Progress 
+              value={progressPercentage} 
+              className={cn(
+                "progress-bar h-2",
+                progressPercentage >= 100 ? "progress-bar-fill-good" : "progress-bar-fill-bad"
+              )}
+            />
+          </>
+        )}
         
         {/* Mini chart for historical data */}
-        <div className="mt-3 h-20">
-          <MiniChart 
-            data={data.history} 
-            progressPercentage={progressPercentage} 
-            isInverse={data.isInverse}
-          />
-        </div>
+        {data.history && (
+          <div className="mt-3 h-20">
+            <MiniChart 
+              data={data.history} 
+              progressPercentage={progressPercentage} 
+              isInverse={data.isInverse}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

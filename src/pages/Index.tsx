@@ -24,11 +24,43 @@ const Index = () => {
   const [sourceData, setSourceData] = useState(initialSourceData);
   const [channelData, setChannelData] = useState(initialChannelData);
   
+  // Create a separate KPI for open opportunities
+  const [openOpportunities, setOpenOpportunities] = useState<KPIData>({
+    id: "open-opportunities",
+    name: "Oportunidades em Aberto",
+    value: 57,
+    change: 12.5,
+    unit: "",
+    isInverse: false,
+    isPositiveGood: true
+  });
+  
   // Update data when period or channel changes
   useEffect(() => {
     setKpiData(getFilteredKpiData(activePeriod, activeChannel));
     setSourceData(getFilteredSourceData(activePeriod, activeChannel));
     setChannelData(getFilteredChannelData(activePeriod, activeChannel));
+    
+    // Update open opportunities based on period/channel
+    // In a real app, this would come from the backend
+    const baseValue = 57;
+    let multiplier = 1;
+    
+    if (activeChannel !== 'all') {
+      if (activeChannel === 'distributor') multiplier = 1.5;
+      else if (activeChannel === 'endCustomer') multiplier = 0.8;
+      else if (activeChannel === 'kreme') multiplier = 1.2;
+      else if (activeChannel === 'retail') multiplier = 0.9;
+    }
+    
+    if (activePeriod === 'daily') multiplier *= 0.2;
+    else if (activePeriod === 'quarterly') multiplier *= 3;
+    else if (activePeriod === 'yearly') multiplier *= 12;
+    
+    setOpenOpportunities(prev => ({
+      ...prev,
+      value: Math.round(baseValue * multiplier)
+    }));
   }, [activePeriod, activeChannel]);
   
   // Handle KPI goal updates
@@ -66,6 +98,8 @@ const Index = () => {
           <LeadSourceChart data={sourceData} />
         </div>
         <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Add Open Opportunities KPI card */}
+          <KPICard key={openOpportunities.id} data={openOpportunities} onGoalUpdate={handleGoalUpdate} />
           {kpiData.slice(8).map(kpi => (
             <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />
           ))}
