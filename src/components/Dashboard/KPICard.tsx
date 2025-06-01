@@ -59,9 +59,10 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
     return value.toString();
   };
 
+  // Format value with negative sign for inverse KPIs
   const formattedValue = data.unit === "R$" 
-    ? `${data.unit} ${formatValue(data.value)}` 
-    : `${formatValue(data.value)}${data.unit}`;
+    ? `${data.isInverse ? '-' : ''}${data.unit} ${formatValue(data.value)}` 
+    : `${data.isInverse ? '-' : ''}${formatValue(data.value)}${data.unit}`;
 
   // Special case for "Oportunidades em Aberto" to show additional value
   const isOpportunities = data.id === "open-opportunities";
@@ -78,7 +79,7 @@ const KPICard: React.FC<KPICardProps> = ({ data, onGoalUpdate }) => {
         </div>
       </div>
       
-      <div className="kpi-value mb-3">{formattedValue}</div>
+      <div className={`kpi-value mb-3 ${data.isInverse ? 'text-red-500' : ''}`}>{formattedValue}</div>
       
       {/* Show opportunity total value when this is the opportunities KPI */}
       {isOpportunities && (

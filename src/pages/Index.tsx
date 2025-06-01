@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { kpiData as initialKpiData, leadSourceData as initialSourceData, channelData as initialChannelData, getFilteredKpiData, getFilteredSourceData, getFilteredChannelData, TimePeriod, KPIData, SalesChannel } from '@/data/mockData';
 import Header from '@/components/Dashboard/Header';
 import KPICard from '@/components/Dashboard/KPICard';
-import LeadSourceChart from '@/components/Dashboard/LeadSourceChart';
+import LeadSourceKPI from '@/components/Dashboard/LeadSourceKPI';
 import ChannelTable from '@/components/Dashboard/ChannelTable';
+
 const Index = () => {
   const [activePeriod, setActivePeriod] = useState<TimePeriod>('monthly');
   const [activeChannel, setActiveChannel] = useState<SalesChannel | "all">('all');
@@ -22,7 +24,6 @@ const Index = () => {
     change: 12.5,
     unit: "",
     opportunityValue: 720000,
-    // Adding the total value of opportunities
     isInverse: false,
     isPositiveGood: true,
     history: [{
@@ -53,22 +54,24 @@ const Index = () => {
     setChannelData(getFilteredChannelData(activePeriod, activeChannel));
 
     // Update open opportunities based on period/channel
-    // In a real app, this would come from the backend
     const baseValue = 57;
     let multiplier = 1;
     if (activeChannel !== 'all') {
-      if (activeChannel === 'distributor') multiplier = 1.5;else if (activeChannel === 'endCustomer') multiplier = 0.8;else if (activeChannel === 'kreme') multiplier = 1.2;else if (activeChannel === 'retail') multiplier = 0.9;
+      if (activeChannel === 'distributor') multiplier = 1.5;
+      else if (activeChannel === 'endCustomer') multiplier = 0.8;
+      else if (activeChannel === 'kreme') multiplier = 1.2;
+      else if (activeChannel === 'retail') multiplier = 0.9;
     }
-    if (activePeriod === 'daily') multiplier *= 0.2;else if (activePeriod === 'quarterly') multiplier *= 3;else if (activePeriod === 'yearly') multiplier *= 12;
+    if (activePeriod === 'daily') multiplier *= 0.2;
+    else if (activePeriod === 'quarterly') multiplier *= 3;
+    else if (activePeriod === 'yearly') multiplier *= 12;
     const opportunityCount = Math.round(baseValue * multiplier);
-    // Calculate a weighted opportunity value based on the count
-    const opportunityValue = opportunityCount * 12500; // Average opportunity value of R$12,500
+    const opportunityValue = opportunityCount * 12500;
 
     setOpenOpportunities(prev => ({
       ...prev,
       value: opportunityCount,
       opportunityValue: opportunityValue,
-      // Also update history data based on period
       history: generateHistoryForPeriod(activePeriod, opportunityCount)
     }));
   }, [activePeriod, activeChannel]);
@@ -81,11 +84,9 @@ const Index = () => {
     let labels: string[] = [];
     let dataPoints: number[] = [];
 
-    // Generate labels and data points based on period
     switch (period) {
       case 'daily':
         labels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-        // Generate slightly random but trending data
         dataPoints = Array.from({
           length: 7
         }, (_, i) => Math.round(currentValue * 0.7 + currentValue * 0.3 * i / 6 + (Math.random() * 5 - 2.5)));
@@ -104,7 +105,6 @@ const Index = () => {
         break;
     }
 
-    // Combine labels and data points
     return labels.map((label, index) => ({
       period: label,
       value: dataPoints[index]
@@ -126,40 +126,43 @@ const Index = () => {
   const handleQuoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMotivationalQuote(e.target.value);
   };
-  return <div className="min-h-screen w-full max-w-full overflow-x-hidden p-4 md:p-6">
-      <Header activePeriod={activePeriod} setActivePeriod={setActivePeriod} activeChannel={activeChannel} setActiveChannel={setActiveChannel} />
+
+  return (
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden p-4 md:p-6">
+      <Header 
+        activePeriod={activePeriod} 
+        setActivePeriod={setActivePeriod} 
+        activeChannel={activeChannel} 
+        setActiveChannel={setActiveChannel} 
+      />
       
       {/* Motivational Quote Section */}
       <div className="mb-6">
         
       </div>
       
-      {/* Main grid layout */}
+      {/* Main grid layout - First 8 KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {kpiData.slice(0, 8).map(kpi => <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />)}
+        {kpiData.slice(0, 8).map(kpi => (
+          <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />
+        ))}
       </div>
       
-      {/* Second row - Additional KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        {/* Add Open Opportunities KPI card */}
+      {/* Second row - Additional KPIs including Lead Source */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <KPICard key={openOpportunities.id} data={openOpportunities} onGoalUpdate={handleGoalUpdate} />
-        {kpiData.slice(8).map(kpi => <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />)}
-      </div>
-      
-      {/* Lead sources chart - in its own row with grid layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="sm:col-span-1">
-          <LeadSourceChart data={sourceData} />
-        </div>
-        <div className="sm:col-span-2 px-0">
-          {/* This div is intentionally empty to maintain layout balance */}
-        </div>
+        {kpiData.slice(8).map(kpi => (
+          <KPICard key={kpi.id} data={kpi} onGoalUpdate={handleGoalUpdate} />
+        ))}
+        <LeadSourceKPI data={sourceData} />
       </div>
       
       {/* Channel performance table */}
       <div className="mb-6">
         <ChannelTable data={channelData} />
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
