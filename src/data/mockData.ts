@@ -303,6 +303,44 @@ export const kpiData: KPIData[] = [
       { period: "Mai", value: 420000 },
       { period: "Jun", value: 440000, goal: 450000 }
     ]
+  },
+  {
+    id: "cac",
+    name: "CAC - Custo por Aquisição",
+    value: 285.50,
+    previousValue: 298.20,
+    goal: 280,
+    unit: "R$",
+    change: -4.3,
+    isPositiveGood: false,
+    isInverse: true,
+    history: [
+      { period: "Jan", value: 320.80 },
+      { period: "Fev", value: 315.40 },
+      { period: "Mar", value: 308.90 },
+      { period: "Abr", value: 302.10 },
+      { period: "Mai", value: 295.60 },
+      { period: "Jun", value: 285.50, goal: 280 }
+    ]
+  },
+  {
+    id: "rework-costs",
+    name: "Custo de Retrabalhos e Erros",
+    value: 15800,
+    previousValue: 18200,
+    goal: 12000,
+    unit: "R$",
+    change: -13.2,
+    isPositiveGood: false,
+    isInverse: true,
+    history: [
+      { period: "Jan", value: 22500 },
+      { period: "Fev", value: 21200 },
+      { period: "Mar", value: 19800 },
+      { period: "Abr", value: 18900 },
+      { period: "Mai", value: 17400 },
+      { period: "Jun", value: 15800, goal: 12000 }
+    ]
   }
 ];
 
